@@ -1,0 +1,21 @@
+# The registry is data: the checks are that the index is well-formed, and that
+# every entry still agrees with the repo it points at (id, name, version floor,
+# platforms, a manifest that ships something). Fetched at HEAD, so a repo that
+# vanished or renamed is caught by the weekly run rather than by a user.
+name: validate
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  registry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - run: python3 validate.py --check-repos
